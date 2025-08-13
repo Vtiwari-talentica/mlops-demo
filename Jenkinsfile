@@ -35,6 +35,29 @@ pipeline {
                 }
             }
         }
+        stage('Install Kubectl & ArgoCD CLI Setup') {
+            steps {
+                sh '''
+                echo 'installing Kubectl & ArgoCD cli...'
+                curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                chmod +x kubectl
+                sudo mv kubectl /usr/local/bin/kubectl
+                curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+                chmod +x argocd
+                sudo mv argocd /usr/local/bin/argocd
+                '''
+            }
+        }
+        stage('Apply Kubernetes & Sync App with ArgoCD') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                    argocd login 0.0.0.0:31021 --username admin --password $(kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d) --insecure
+                    argocd app sync gitopsapp
+                    '''
+                }
+            }
+        }
     }
 }
 
