@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_HUB_REPO = "vikastiwari23/mlops"
         DOCKER_HUB_CREDENTIALS_ID = "jenkins_token"
-        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env.PATH}"
+        PATH = "$WORKSPACE/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env.PATH}"
     }
     stages {
         stage('Checkout Github') {
@@ -39,12 +39,13 @@ pipeline {
             steps {
                 sh '''
                 echo 'installing Kubectl & ArgoCD cli...'
+                mkdir -p "$WORKSPACE/bin"
                 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
                 chmod +x kubectl
-                mv kubectl /usr/local/bin/kubectl
+                mv kubectl "$WORKSPACE/bin/kubectl"
                 curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
                 chmod +x argocd
-                mv argocd /usr/local/bin/argocd
+                mv argocd "$WORKSPACE/bin/argocd"
                 '''
             }
         }
