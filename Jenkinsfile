@@ -31,9 +31,8 @@ pipeline {
             steps {
                 script {
                     echo 'Pushing Docker image to DockerHub...'
-                    docker.withRegistry('', "${DOCKER_HUB_CREDENTIALS_ID}") {
-                        dockerImage.push('latest')
-                    }
+                    sh 'docker login -u $DOCKER_HUB_REPO -p $DOCKER_HUB_CREDENTIALS_ID'
+                    sh 'docker push ${DOCKER_HUB_REPO}:latest'
                 }
             }
         }
