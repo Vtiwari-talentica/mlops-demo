@@ -3,6 +3,7 @@ pipeline {
     environment {
         DOCKER_HUB_REPO = "vikastiwari23/mlops"
         DOCKER_HUB_CREDENTIALS_ID = "jenkins_token"
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${env.PATH}"
     }
     stages {
         stage('Checkout Github') {
