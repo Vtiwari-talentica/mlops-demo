@@ -29,9 +29,8 @@ pipeline {
         }
         stage('Push Docker Image') {
             steps {
-                script {
-                    echo 'Pushing Docker image to DockerHub...'
-                    sh 'docker login -u $DOCKER_HUB_REPO -p $DOCKER_HUB_CREDENTIALS_ID'
+                withCredentials([usernamePassword(credentialsId: 'jenkins_token', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
+                    sh 'docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASS'
                     sh 'docker push ${DOCKER_HUB_REPO}:latest'
                 }
             }
